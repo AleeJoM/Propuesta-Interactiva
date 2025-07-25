@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Preguuunta finaal...</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #ff69b4, #ff1493, #e6e6fa);
+            color: white;
+            font-family: 'Arial', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            text-align: center;
+        }
+        .redirect-message {
+            max-width: 500px;
+            padding: 2rem;
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 25px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .hearts {
+            font-size: 2rem;
+            margin: 1rem 0;
+        }
+        .heart {
+            display: inline-block;
+            animation: float 2s ease-in-out infinite;
+            margin: 0 0.5rem;
+        }
+        .heart:nth-child(2) { animation-delay: 0.3s; }
+        .heart:nth-child(3) { animation-delay: 0.6s; }
+        .heart:nth-child(4) { animation-delay: 0.9s; }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        .sparkles {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+        .sparkle {
+            position: absolute;
+            color: #ffff00;
+            animation: sparkle 3s linear infinite;
+        }
+        @keyframes sparkle {
+            0%, 100% { opacity: 0; transform: scale(0); }
+            50% { opacity: 1; transform: scale(1); }
+        }
+    </style>
+</head>
+<body>
+    <div class="sparkles" id="sparkles"></div>
+    
+    <div class="redirect-message">
+        <div class="hearts">
+            <span class="heart">💖</span>
+            <span class="heart">✨</span>
+            <span class="heart">💕</span>
+            <span class="heart">🌹</span>
+        </div>
+        <h2>Si llegaste hasta acá, es por algo!</h2>
+        <p><em>Preparando algo muy muy muy especial para vos ✨</em></p>
+    </div>
+
+    <script>
+        // Create floating sparkles
+        function createSparkle() {
+            const sparkle = document.createElement('div');
+            sparkle.className = 'sparkle';
+            sparkle.innerHTML = '✨';
+            sparkle.style.left = Math.random() * 100 + '%';
+            sparkle.style.top = Math.random() * 100 + '%';
+            sparkle.style.animationDelay = Math.random() * 3 + 's';
+            document.getElementById('sparkles').appendChild(sparkle);
+
+            setTimeout(() => sparkle.remove(), 3000);
+        }
+
+        // Generate sparkles
+        setInterval(createSparkle, 500);
+        
+        // Redirect to React app final question after delay
+        setTimeout(() => {
+            window.location.href = '/final-question';
+        }, 3000);
+    </script>
+</body>
+</html>
