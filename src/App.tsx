@@ -12,7 +12,7 @@ const App: React.FC = () => {
   return (
     <Router>
       <div className="app-container">
-        <AnimatePresence mode="wait">
+        <AnimatePresence mode="wait" onExitComplete={() => {}}>
           {isTransitioning && (
             <motion.div
               key="transition"
@@ -41,52 +41,54 @@ const App: React.FC = () => {
           )}
         </AnimatePresence>
 
-        <Routes>
-          <Route 
-            path="/" 
-            element={
-              <motion.div
-                key="welcome"
-                initial={{ opacity: 0, x: -100 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: 100 }}
-                transition={{ duration: 0.5 }}
-              >
-                <WelcomePage />
-              </motion.div>
-            } 
-          />
-          
-          <Route 
-            path="/game" 
-            element={
-              <motion.div
-                key="game"
-                initial={{ opacity: 0, y: 50 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -50 }}
-                transition={{ duration: 0.5 }}
-              >
-                <GamePage />
-              </motion.div>
-            } 
-          />
-          
-          <Route 
-            path="/final-question" 
-            element={
-              <motion.div
-                key="final"
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 1.1 }}
-                transition={{ duration: 0.6 }}
-              >
-                <FinalQuestionPage />
-              </motion.div>
-            } 
-          />
-        </Routes>
+        <AnimatePresence mode="wait">
+          <Routes>
+            <Route 
+              path="/" 
+              element={
+                <motion.div
+                  key="welcome"
+                  initial={{ opacity: 0, x: -100 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: 100 }}
+                  transition={{ duration: 0.5 }}
+                >
+                  <WelcomePage />
+                </motion.div>
+              } 
+            />
+            
+            <Route 
+              path="/game" 
+              element={
+                <motion.div
+                  key="game"
+                  initial={{ opacity: 0, y: 50 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -50 }}
+                  transition={{ duration: 0.5 }}
+                >
+                  <GamePage />
+                </motion.div>
+              } 
+            />
+            
+            <Route 
+              path="/final-question" 
+              element={
+                <motion.div
+                  key="final"
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 1.1 }}
+                  transition={{ duration: 0.6 }}
+                >
+                  <FinalQuestionPage />
+                </motion.div>
+              } 
+            />
+          </Routes>
+        </AnimatePresence>
       </div>
     </Router>
   );

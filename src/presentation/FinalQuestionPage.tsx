@@ -303,33 +303,33 @@ const legalFrames = [
       )}
       {showSurpriseModal && (
         <motion.div 
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm" 
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4" 
           initial={{ opacity: 0 }} 
           animate={{ opacity: 1 }} 
           transition={{ duration: 0.7 }}
         >
           <motion.div 
-            className="bg-gradient-to-br from-gray-50 via-pink-100 to-fuchsia-100 rounded-3xl shadow-2xl p-8 max-w-2xl w-full flex flex-col items-center relative" 
+            className="bg-gradient-to-br from-gray-50 via-pink-100 to-fuchsia-100 rounded-3xl shadow-2xl p-4 sm:p-6 md:p-8 max-w-[95vw] sm:max-w-lg md:max-w-2xl w-full flex flex-col items-center relative max-h-[90vh] overflow-y-auto" 
             initial={{ scale: 0.8, opacity: 0 }} 
             animate={{ scale: 1, opacity: 1 }} 
             transition={{ duration: 0.6, type: 'spring', bounce: 0.3 }}
           >
             <motion.img 
-              src="/assets/con_rus.jpeg" 
+              src="/Propuesta-Interactiva/assets/con_rus.jpeg" 
               alt="Entradas sorpresa" 
-              className="w-full max-w-2xl h-auto rounded-2xl mb-8 shadow-xl border-4 border-pink-300" 
+              className="w-full max-w-full h-auto rounded-2xl mb-4 sm:mb-6 md:mb-8 shadow-xl border-2 sm:border-4 border-pink-300" 
               initial={{ filter: 'blur(18px) grayscale(1)', opacity: 0.5 }} 
               animate={imageRevealed ? { filter: 'blur(0px) grayscale(0)', opacity: 1 } : { filter: 'blur(18px) grayscale(1)', opacity: 0.7 }} 
               transition={{ duration: 1.2 }}
             />
             <motion.div 
-              className="text-center text-2xl md:text-3xl text-fuchsia-900 mb-8 whitespace-pre-line font-[Playfair_Display] tracking-wide" 
+              className="text-center text-lg sm:text-xl md:text-2xl lg:text-3xl text-fuchsia-900 mb-4 sm:mb-6 md:mb-8 whitespace-pre-line font-[Playfair_Display] tracking-wide px-2" 
               style={{ fontFamily: 'Playfair Display, Montserrat, serif' }}
               initial={{ opacity: 0, y: 30 }} 
               animate={{ opacity: 1, y: 0 }} 
               transition={{ delay: 0.7, duration: 0.7 }}
             >
-              <span className="text-3xl font-bold text-pink-500 animate-pulse">?</span>
+              <span className="text-2xl sm:text-3xl font-bold text-pink-500 animate-pulse">?</span>
               <br />Yyy como sorpresa de la sorpresa de la sorpresa ya final...
               <br />Tengo algo que sé que te gusta y podemos compartir...
               <br />Sip... El día <span className="font-semibold text-pink-600">25 de octubre</span>... ¿Te suena?...
@@ -337,7 +337,7 @@ const legalFrames = [
             </motion.div>
             <motion.button
               onClick={() => setShowSurpriseModal(false)}
-              className={`mt-2 px-6 py-2 bg-pink-500 text-white rounded-full shadow hover:bg-pink-600 transition-all text-lg font-semibold ${!imageRevealed ? 'opacity-50 cursor-not-allowed' : ''}`}
+              className={`mt-2 px-4 sm:px-6 py-2 bg-pink-500 text-white rounded-full shadow hover:bg-pink-600 transition-all text-base sm:text-lg font-semibold ${!imageRevealed ? 'opacity-50 cursor-not-allowed' : ''}`}
               initial={{ opacity: 0, scale: 0.8 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: 1.2, duration: 0.4 }}
