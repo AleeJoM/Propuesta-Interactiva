@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="./assets/heart-icon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Hola mi Agu 😍💕</title>
+    <meta name="description" content="Voy a proceder..." />
+    
+    <!-- Content Security Policy -->
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self';">
+    
+    <!-- Single Page Apps for GitHub Pages -->
+    <script type="text/javascript">
+      (function(l) {
+        if (l.search[1] === '/' ) {
+          var decoded = l.search.slice(1).split('&').map(function(s) { 
+            return s.replace(/~and~/g, '&')
+          }).join('?');
+          window.history.replaceState(null, null,
+              l.pathname.slice(0, -1) + decoded + l.hash
+          );
+        }
+      }(window.location))
+    </script>
+    
+    <!-- Open Graph Meta Tags -->
+    <meta property="og:title" content="Agutilinda mía! Te animas a contestarme algunas preguntas? 🤔💕" />
+    <meta property="og:description" content="Voy a proceder..." />
+    <meta property="og:type" content="website" />
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Preload critical resources -->
+    
+    <style>
+      /* Critical CSS for initial load */
+      body {
+        margin: 0;
+        padding: 0;
+        font-family: 'Inter', sans-serif;
+        font-style: normal;
+        background: linear-gradient(135deg, #fef7f7, #e6e6fa);
+        min-height: 100vh;
+      }
+      
+      #root {
+        min-height: 100vh;
+      }
+      
+      /* Loading animation */
+      .loading-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        flex-direction: column;
+      }
+      
+      .loading-heart {
+        font-size: 4rem;
+        animation: heartbeat 1.5s ease-in-out infinite;
+      }
+      
+      @keyframes heartbeat {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.1); }
+      }
+      
+      .loading-text {
+        margin-top: 1rem;
+        font-size: 1.2rem;
+        color: #d9495a;
+        font-weight: 500;
+      }
+    </style>
+    <script type="module" crossorigin src="./assets/index-09805302.js"></script>
+    <link rel="stylesheet" href="./assets/index-489d9a51.css">
+  </head>
+  <body>
+    <!-- Initial loading screen -->
+    <div id="root">
+      <div class="loading-container">
+        <div class="loading-heart">💕</div>
+        <div class="loading-text">Preparando sorpresitas...</div>
+      </div>
+    </div>
+    
+    
+  </body>
+</html>
