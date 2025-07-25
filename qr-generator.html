@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QR Code - Propuesta Interactiva</title>
+    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        .container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            text-align: center;
+            max-width: 500px;
+            width: 100%;
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 2.5em;
+        }
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 1.2em;
+        }
+        #qrcode {
+            margin: 30px 0;
+            display: flex;
+            justify-content: center;
+        }
+        .url {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 20px 0;
+            word-break: break-all;
+            font-family: monospace;
+            border: 2px dashed #dee2e6;
+        }
+        .instructions {
+            color: #666;
+            font-size: 0.9em;
+            line-height: 1.6;
+            margin-top: 20px;
+        }
+        .heart {
+            font-size: 2em;
+            color: #e91e63;
+            animation: pulse 1.5s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+        .mobile-note {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 10px;
+            padding: 15px;
+            margin: 20px 0;
+            color: #856404;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="heart">💕</div>
+        <h1>Propuesta Interactiva</h1>
+        <p class="subtitle">¡Escanea el código QR para acceder!</p>
+        
+        <div id="qrcode"></div>
+        
+        <div class="url" id="url">
+            Generando URL...
+        </div>
+        
+        <div class="mobile-note">
+            📱 <strong>Perfecto para móviles:</strong> La aplicación está optimizada para dispositivos móviles y es completamente responsive.
+        </div>
+        
+        <div class="instructions">
+            <p><strong>Instrucciones:</strong></p>
+            <p>1. Abre la cámara de tu teléfono</p>
+            <p>2. Apunta al código QR</p>
+            <p>3. Toca la notificación que aparece</p>
+            <p>4. ¡Disfruta de la experiencia! 💖</p>
+        </div>
+    </div>
+
+    <script>
+        // URL de GitHub Pages (actualiza cuando esté disponible)
+        const websiteURL = 'https://aleejom.github.io/Propuesta-Interactiva/';
+        
+        // Mostrar la URL
+        document.getElementById('url').textContent = websiteURL;
+        
+        // Generar QR Code
+        QRCode.toCanvas(document.getElementById('qrcode'), websiteURL, {
+            width: 300,
+            height: 300,
+            colorDark: '#000000',
+            colorLight: '#ffffff',
+            margin: 2,
+            errorCorrectionLevel: 'M'
+        }, function (error) {
+            if (error) console.error(error);
+            console.log('QR Code generado exitosamente!');
+        });
+        
+        // Función para copiar URL
+        function copyURL() {
+            navigator.clipboard.writeText(websiteURL).then(function() {
+                alert('¡URL copiada al portapapeles!');
+            }, function(err) {
+                console.error('Error al copiar: ', err);
+            });
+        }
+        
+        // Hacer la URL clickeable
+        document.getElementById('url').addEventListener('click', copyURL);
+        document.getElementById('url').style.cursor = 'pointer';
+        document.getElementById('url').title = 'Haz clic para copiar';
+    </script>
+</body>
+</html>
