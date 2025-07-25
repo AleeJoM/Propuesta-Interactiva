@@ -6,19 +6,14 @@ import { useGameStore } from '../infrastructure/stores';
 
 export const FinalQuestionPage: React.FC = () => {
   const { getCurrentScore } = useGameStore();
-  const [showFireworks, setShowFireworks] = useState(false);
   const [userResponse, setUserResponse] = useState<'yes' | 'no' | null>(null);
   const [trollAttempts] = useState(0);
-  const [noButtonPosition, setNoButtonPosition] = useState({ x: 0, y: 0 });
   const [showTrollMessage, setShowTrollMessage] = useState(false);
   // Secuencia legal previa
   const [showLegalFrames, setShowLegalFrames] = useState(true);
   const [frameIndex, setFrameIndex] = useState(0);
   const [showSurpriseModal, setShowSurpriseModal] = useState(false);
   const [imageRevealed, setImageRevealed] = useState(false);
-
-  // Variables para logging (evitar errores de compilación)
-  console.log({ showFireworks, noButtonPosition, trollAttempts });
 
   useEffect(() => {
     if (showSurpriseModal) {
@@ -75,19 +70,6 @@ const legalFrames = [
     };
   }, []);
 
-  const moveNoButton = () => {
-    const maxX = window.innerWidth - 200;
-    const maxY = window.innerHeight - 100;
-    setNoButtonPosition({
-      x: Math.random() * maxX,
-      y: Math.random() * maxY
-    });
-    // Function used for future troll feature
-  };
-  
-  // Log para evitar error de compilación
-  console.log({ moveNoButton });
-
   const handleNoClick = () => {
     // Mostrar mensajes en orden y repetir infinitamente
     const nextIndex = (trollIndex + 1) % trollMessages.length;
@@ -103,7 +85,6 @@ const legalFrames = [
     }
     
     setUserResponse(response);
-    setShowFireworks(true);
     // Trigger celebration effects
     setTimeout(() => {
       // Could navigate to a celebration page or show success message
