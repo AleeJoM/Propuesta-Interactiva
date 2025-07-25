@@ -1,6 +1,5 @@
 import { Question, QuestionId, GameSession, GameSessionId, AnsweredQuestion } from './entities';
 
-// Repository Interfaces (Domain Layer)
 export interface QuestionRepository {
   findAll(): Promise<Question[]>;
   findById(id: QuestionId): Promise<Question | null>;
@@ -11,9 +10,9 @@ export interface GameSessionRepository {
   save(session: GameSession): Promise<void>;
   findById(id: GameSessionId): Promise<GameSession | null>;
   getCurrentSession(): Promise<GameSession | null>;
+  delete(id: GameSessionId): Promise<void>;
 }
 
-// Domain Services
 export interface GameService {
   startNewGame(): Promise<GameSession>;
   answerQuestion(sessionId: GameSessionId, questionId: QuestionId, optionId: string): Promise<GameSession>;

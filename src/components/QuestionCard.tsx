@@ -8,6 +8,17 @@ interface QuestionCardProps {
   isLoading?: boolean;
 }
 
+const ANIMATION_DELAYS = {
+  TRANSITION_RESET: 100,
+  ANSWER_FEEDBACK: 800
+} as const;
+
+const OPTION_STYLES = {
+  available: 'border-pink-200 bg-white/60 hover:bg-pink-50 hover:border-pink-400 transform hover:scale-105 hover:shadow-lg cursor-pointer',
+  selected: 'border-rose-500 bg-pink-100 shadow-lg',
+  disabled: 'border-gray-200 bg-gray-50/60 opacity-50'
+} as const;
+
 export const QuestionCard: React.FC<QuestionCardProps> = ({
   question,
   onAnswer,
@@ -17,19 +28,21 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({
   const [hasAnswered, setHasAnswered] = useState(false);
   const [isTransitioning, setIsTransitioning] = useState(false);
 
-  // Reset state when question changes
-  useEffect(() => {
+  const resetState = useCallback(() => {
     setIsTransitioning(true);
     setSelectedOption(null);
     setHasAnswered(false);
     
-    // Small delay to ensure clean transition
     const timer = setTimeout(() => {
       setIsTransitioning(false);
-    }, 100);
+    }, ANIMATION_DELAYS.TRANSITION_RESET);
     
     return () => clearTimeout(timer);
-  }, [question.id.getValue()]);
+  }, []);
+
+  useEffect(() => {
+    resetState();
+  }, [question.id.getValue(), resetState]);
 
   const handleOptionSelect = useCallback((optionId: string) => {
     if (hasAnswered || isLoading || isTransitioning) return;
@@ -37,13 +50,20 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({
     setSelectedOption(optionId);
     setHasAnswered(true);
     
-    // Add a small delay for visual feedback
     const timer = setTimeout(() => {
       onAnswer(optionId);
-    }, 800); // Increased delay to let animation complete
+    }, ANIMATION_DELAYS.ANSWER_FEEDBACK);
     
     return () => clearTimeout(timer);
   }, [hasAnswered, isLoading, isTransitioning, onAnswer]);
+
+  const getOptionStyle = (optionId: string) => {
+    if (!hasAnswered) return OPTION_STYLES.available;
+    if (selectedOption === optionId) return OPTION_STYLES.selected;
+    return OPTION_STYLES.disabled;
+  };
+
+  const isOptionDisabled = hasAnswered || isLoading || isTransitioning;
 
   return (
     <motion.div
@@ -74,15 +94,9 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({
               transition={{ delay: index * 0.1 }}
               whileHover={!hasAnswered ? { scale: 1.02 } : {}}
               whileTap={!hasAnswered ? { scale: 0.98 } : {}}
-              className={`w-full p-4 text-left rounded-xl border-2 transition-all duration-300 ${
-                !hasAnswered 
-                  ? 'border-pink-200 bg-white/60 hover:bg-pink-50 hover:border-pink-400 transform hover:scale-105 hover:shadow-lg cursor-pointer'
-                  : selectedOption === option.id 
-                    ? 'border-rose-500 bg-pink-100 shadow-lg' 
-                    : 'border-gray-200 bg-gray-50/60 opacity-50'
-              }`}
+              className={`w-full p-4 text-left rounded-xl border-2 transition-all duration-300 ${getOptionStyle(option.id)}`}
               onClick={() => handleOptionSelect(option.id)}
-              disabled={hasAnswered || isLoading || isTransitioning}
+              disabled={isOptionDisabled}
             >
               <span className="text-lg">{option.text}</span>
               {selectedOption === option.id && (

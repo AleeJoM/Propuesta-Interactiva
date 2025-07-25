@@ -1,24 +1,32 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { RomanticButton } from '../components/RomanticButton';
 
+const TOTAL_EMOJIS = 36;
+const FLOATING_HEARTS = 6;
+const EMOJI_SET = ['💕', '💖', '💝', '❤️‍🔥', '💍', '🫶', '💘', '💞', '💓', '💗', '💐', '💜', '💙', '💚', '💛', '🧡', '❤️'];
+const HEART_EMOJIS = ['💕', '💖', '💝', '🌹', '✨'];
+
+const getRandomEmoji = (emojiSet: string[]) => 
+  emojiSet[Math.floor(Math.random() * emojiSet.length)];
+
+const getRandomPosition = () => Math.random() * (window?.innerWidth || 800) * 0.90;
+
 export const WelcomePage: React.FC = () => {
   const navigate = useNavigate();
-
-  useEffect(() => {
-    // Preload animations and sounds here if needed
-  }, []);
 
   const handleStartGame = () => {
     navigate('/game');
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 relative overflow-hidden" style={{ background: 'linear-gradient(135deg, #fdf6fb 0%, #e6e6fa 100%)' }}>
-      {/* Animated background emojis */}
+    <div 
+      className="min-h-screen flex items-center justify-center p-4 relative overflow-hidden" 
+      style={{ background: 'linear-gradient(135deg, #fdf6fb 0%, #e6e6fa 100%)' }}
+    >
       <div className="absolute inset-0 pointer-events-none z-0">
-        {[...Array(36)].map((_, i) => (
+        {[...Array(TOTAL_EMOJIS)].map((_, i) => (
           <motion.div
             key={i}
             className="absolute"
@@ -29,8 +37,8 @@ export const WelcomePage: React.FC = () => {
               zIndex: 1
             }}
             initial={{ 
-              x: Math.random() * window.innerWidth * 0.90,
-              y: window.innerHeight + 120,
+              x: getRandomPosition(),
+              y: (window?.innerHeight || 600) + 120,
               opacity: 0,
               rotate: 0
             }}
@@ -38,7 +46,7 @@ export const WelcomePage: React.FC = () => {
               y: -120,
               opacity: [0, 1, 0.8, 0],
               rotate: 360,
-              x: Math.random() * window.innerWidth * 0.90
+              x: getRandomPosition()
             }}
             transition={{
               duration: 6 + Math.random() * 3,
@@ -47,17 +55,17 @@ export const WelcomePage: React.FC = () => {
               ease: "easeInOut"
             }}
           >
-            {['💕', '💖', '💝', '❤️‍🔥', '💍', '🫶', '💘', '💞', '💓', '💗', '💐', '💜', '💙', '💚', '💛', '🧡', '❤️'][Math.floor(Math.random() * 20)]}
+            {getRandomEmoji(EMOJI_SET)}
           </motion.div>
         ))}
       </div>
+
       <motion.div
         initial={{ opacity: 0, y: 50 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8 }}
         className="text-center max-w-lg mx-auto relative z-10 bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl border border-pink-200 p-8"
       >
-        {/* Animated hearts */}
         <motion.div
           animate={{ 
             scale: [1, 1.2, 1],
@@ -105,21 +113,20 @@ export const WelcomePage: React.FC = () => {
           </RomanticButton>
         </motion.div>
 
-        {/* Floating hearts animation */}
         <div className="absolute inset-0 pointer-events-none overflow-hidden">
-          {[...Array(6)].map((_, i) => (
+          {[...Array(FLOATING_HEARTS)].map((_, i) => (
             <motion.div
               key={i}
               className="absolute text-2xl text-pink-300"
               initial={{ 
-                x: Math.random() * (typeof window !== 'undefined' ? window.innerWidth : 800),
-                y: (typeof window !== 'undefined' ? window.innerHeight : 600) + 50,
+                x: getRandomPosition(),
+                y: (window?.innerHeight || 600) + 50,
                 opacity: 0
               }}
               animate={{
                 y: -50,
                 opacity: [0, 1, 0],
-                x: Math.random() * (typeof window !== 'undefined' ? window.innerWidth : 800)
+                x: getRandomPosition()
               }}
               transition={{
                 duration: 4 + Math.random() * 2,
@@ -128,7 +135,7 @@ export const WelcomePage: React.FC = () => {
                 ease: "easeOut"
               }}
             >
-              {['💕', '💖', '💝', '🌹', '✨'][Math.floor(Math.random() * 5)]}
+              {getRandomEmoji(HEART_EMOJIS)}
             </motion.div>
           ))}
         </div>

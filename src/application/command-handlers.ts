@@ -7,7 +7,10 @@ import {
   CompleteGameCommand 
 } from './commands';
 
-// Command Handlers
+const ERRORS = {
+  NO_ACTIVE_SESSION: 'No active game session found'
+} as const;
+
 export class StartGameCommandHandler {
   constructor(
     private readonly gameService: GameService,
@@ -28,12 +31,9 @@ export class AnswerQuestionCommandHandler {
   ) {}
 
   async handle(command: AnswerQuestionCommand): Promise<GameSession> {
-    const currentSession = await this.gameSessionRepository.getCurrentSession();
-    if (!currentSession) {
-      throw new Error('No active game session found');
-    }
-
+    const currentSession = await this.getCurrentSessionOrThrow();
     const questionId = new QuestionId(command.questionId);
+    
     const updatedSession = await this.gameService.answerQuestion(
       currentSession.id,
       questionId,
@@ -42,6 +42,14 @@ export class AnswerQuestionCommandHandler {
 
     await this.gameSessionRepository.save(updatedSession);
     return updatedSession;
+  }
+
+  private async getCurrentSessionOrThrow(): Promise<GameSession> {
+    const session = await this.gameSessionRepository.getCurrentSession();
+    if (!session) {
+      throw new Error(ERRORS.NO_ACTIVE_SESSION);
+    }
+    return session;
   }
 }
 
@@ -52,12 +60,16 @@ export class NextQuestionCommandHandler {
   ) {}
 
   async handle(_command: NextQuestionCommand): Promise<Question | null> {
-    const currentSession = await this.gameSessionRepository.getCurrentSession();
-    if (!currentSession) {
-      throw new Error('No active game session found');
-    }
-
+    const currentSession = await this.getCurrentSessionOrThrow();
     return await this.gameService.getNextQuestion(currentSession.id);
+  }
+
+  private async getCurrentSessionOrThrow(): Promise<GameSession> {
+    const session = await this.gameSessionRepository.getCurrentSession();
+    if (!session) {
+      throw new Error(ERRORS.NO_ACTIVE_SESSION);
+    }
+    return session;
   }
 }
 
@@ -68,13 +80,17 @@ export class CompleteGameCommandHandler {
   ) {}
 
   async handle(_command: CompleteGameCommand): Promise<GameSession> {
-    const currentSession = await this.gameSessionRepository.getCurrentSession();
-    if (!currentSession) {
-      throw new Error('No active game session found');
-    }
-
+    const currentSession = await this.getCurrentSessionOrThrow();
     const completedSession = await this.gameService.completeGame(currentSession.id);
     await this.gameSessionRepository.save(completedSession);
     return completedSession;
+  }
+
+  private async getCurrentSessionOrThrow(): Promise<GameSession> {
+    const session = await this.gameSessionRepository.getCurrentSession();
+    if (!session) {
+      throw new Error(ERRORS.NO_ACTIVE_SESSION);
+    }
+    return session;
   }
 }

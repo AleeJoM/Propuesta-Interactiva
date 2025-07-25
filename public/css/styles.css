@@ -13,27 +13,18 @@
 }
 
 @layer components {
+  /* Componentes principales usados en la app */
   .romantic-gradient {
     @apply bg-gradient-to-r from-pink-500 to-rose-500;
   }
   
   .romantic-button {
-    @apply px-6 py-3 rounded-full font-medium transition-all duration-300 transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-pink-300;
+    @apply px-6 py-3 rounded-full font-medium transition-all duration-300 
+           transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-pink-300;
   }
   
   .romantic-card {
-    @apply bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl border border-pink-200 p-6;
-  }
-  
-  .question-option {
-    @apply w-full p-4 text-left rounded-xl border-2 border-pink-200 bg-white/60 hover:bg-pink-50 hover:border-pink-400 transition-all duration-300 transform;
-  }
-  
-  .question-option:hover {
-    @apply shadow-lg scale-105;
-  }
-  
-  .question-option.selected {
-    @apply border-rose-500 bg-pink-100;
+    @apply bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl 
+           border border-pink-200 p-6;
   }
 }

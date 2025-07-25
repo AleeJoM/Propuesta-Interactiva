@@ -6,7 +6,6 @@ import {
   GetGameScoreQuery 
 } from './commands';
 
-// Query Handlers
 export class GetCurrentQuestionQueryHandler {
   constructor(
     private readonly questionRepository: QuestionRepository,
@@ -15,11 +14,8 @@ export class GetCurrentQuestionQueryHandler {
 
   async handle(_query: GetCurrentQuestionQuery): Promise<Question | null> {
     const currentSession = await this.gameSessionRepository.getCurrentSession();
-    if (!currentSession) {
-      return null;
-    }
+    if (!currentSession) return null;
 
-    // Get all questions and return the current one based on index
     const allQuestions = await this.questionRepository.findAll();
     return allQuestions[currentSession.currentQuestionIndex] || null;
   }

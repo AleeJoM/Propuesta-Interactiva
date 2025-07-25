@@ -14,6 +14,10 @@ import {
   AnsweredQuestion
 } from '../domain/entities';
 
+const ROMANTIC_COMPATIBILITY_THRESHOLD = 60;
+const ROMANTIC_VALUE_MULTIPLIER = 2;
+const MAX_POINTS_PER_QUESTION = 20;
+
 export class GameServiceImpl implements GameService {
   constructor(
     private readonly questionRepository: QuestionRepository,
@@ -41,15 +45,8 @@ export class GameServiceImpl implements GameService {
     questionId: QuestionId, 
     optionId: string
   ): Promise<GameSession> {
-    const session = await this.gameSessionRepository.findById(sessionId);
-    if (!session) {
-      throw new Error('Game session not found');
-    }
-
-    const question = await this.questionRepository.findById(questionId);
-    if (!question) {
-      throw new Error('Question not found');
-    }
+    const session = await this.getSessionOrThrow(sessionId);
+    const question = await this.getQuestionOrThrow(questionId);
 
     const points = this.scoreCalculator.calculateQuestionScore(question, optionId);
     
@@ -63,7 +60,6 @@ export class GameServiceImpl implements GameService {
     const updatedAnsweredQuestions = [...session.answeredQuestions, answeredQuestion];
     const newScore = session.score.add(points);
     
-    // Check if this is the last question
     const allQuestions = await this.questionRepository.findAll();
     const isLastQuestion = session.currentQuestionIndex >= allQuestions.length - 1;
     
@@ -80,14 +76,10 @@ export class GameServiceImpl implements GameService {
 
   async getNextQuestion(sessionId: GameSessionId): Promise<Question | null> {
     const session = await this.gameSessionRepository.findById(sessionId);
-    if (!session) {
-      return null;
-    }
+    if (!session) return null;
 
     const allQuestions = await this.questionRepository.findAll();
     
-    // El currentQuestionIndex ya fue incrementado en answerQuestion
-    // por lo que apunta a la siguiente pregunta que queremos mostrar
     if (session.currentQuestionIndex >= allQuestions.length) {
       return null;
     }
@@ -96,10 +88,7 @@ export class GameServiceImpl implements GameService {
   }
 
   async completeGame(sessionId: GameSessionId): Promise<GameSession> {
-    const session = await this.gameSessionRepository.findById(sessionId);
-    if (!session) {
-      throw new Error('Game session not found');
-    }
+    const session = await this.getSessionOrThrow(sessionId);
 
     const updatedSession: GameSession = {
       ...session,
@@ -111,29 +100,38 @@ export class GameServiceImpl implements GameService {
 
   async canProceedToFinalQuestion(sessionId: GameSessionId): Promise<boolean> {
     const session = await this.gameSessionRepository.findById(sessionId);
-    if (!session) {
-      return false;
-    }
+    if (!session) return false;
 
-    // Logic: Can proceed to final question if romantic compatibility is above threshold
     const romanticScore = this.scoreCalculator.calculateRomanticCompatibility(session.answeredQuestions);
-    return romanticScore >= 60; // 60% compatibility threshold
+    return romanticScore >= ROMANTIC_COMPATIBILITY_THRESHOLD;
+  }
+
+  private async getSessionOrThrow(sessionId: GameSessionId): Promise<GameSession> {
+    const session = await this.gameSessionRepository.findById(sessionId);
+    if (!session) {
+      throw new Error('Game session not found');
+    }
+    return session;
+  }
+
+  private async getQuestionOrThrow(questionId: QuestionId): Promise<Question> {
+    const question = await this.questionRepository.findById(questionId);
+    if (!question) {
+      throw new Error('Question not found');
+    }
+    return question;
   }
 }
 
 export class ScoreCalculatorServiceImpl implements ScoreCalculatorService {
   calculateQuestionScore(question: Question, selectedOptionId: string): number {
     const selectedOption = question.options.find(opt => opt.id === selectedOptionId);
-    if (!selectedOption) {
-      return 0;
-    }
+    if (!selectedOption) return 0;
 
-    // Base points from question
     let points = question.points;
     
-    // Add romantic value bonus
     if (selectedOption.romanticValue) {
-      points += selectedOption.romanticValue * 2; // Multiply romantic value
+      points += selectedOption.romanticValue * ROMANTIC_VALUE_MULTIPLIER;
     }
 
     return points;
@@ -144,10 +142,8 @@ export class ScoreCalculatorServiceImpl implements ScoreCalculatorService {
   }
 
   calculateRomanticCompatibility(answeredQuestions: AnsweredQuestion[]): number {
-    // This would be more sophisticated in a real app
-    // For now, calculate based on total romantic points vs maximum possible
     const totalRomanticPoints = answeredQuestions.reduce((total, answer) => total + answer.points, 0);
-    const maxPossiblePoints = answeredQuestions.length * 20; // Assuming max 20 points per question
+    const maxPossiblePoints = answeredQuestions.length * MAX_POINTS_PER_QUESTION;
     
     return Math.min(100, (totalRomanticPoints / maxPossiblePoints) * 100);
   }

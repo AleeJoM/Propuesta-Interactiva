@@ -1,30 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { customTrollMessages } from '../config/custom-questions';
+import { getRandomFinalMessage } from '../config/custom-questions';
 import { motion } from 'framer-motion';
 import { RomanticButton } from '../components/RomanticButton';
 import { useGameStore } from '../infrastructure/stores';
 
-export const FinalQuestionPage: React.FC = () => {
-  const { getCurrentScore } = useGameStore();
-  const [userResponse, setUserResponse] = useState<'yes' | 'no' | null>(null);
-  const [trollAttempts] = useState(0);
-  const [showTrollMessage, setShowTrollMessage] = useState(false);
-  // Secuencia legal previa
-  const [showLegalFrames, setShowLegalFrames] = useState(true);
-  const [frameIndex, setFrameIndex] = useState(0);
-  const [showSurpriseModal, setShowSurpriseModal] = useState(false);
-  const [imageRevealed, setImageRevealed] = useState(false);
+const LEGAL_FRAME_DURATION = 10000;
+const IMAGE_REVEAL_DELAY = 10000;
+const EMOJI_SET = ['💕', '💖', '💝', '🌹', '✨', '💍', '🦋', '🌟', '🫶', '💘', '💞', '💓', '💗', '💐', '💜', '💙', '💚', '💛', '🧡', '❤️'];
 
-  useEffect(() => {
-    if (showSurpriseModal) {
-      setImageRevealed(false);
-      const timer = setTimeout(() => setImageRevealed(true), 10000);
-      return () => clearTimeout(timer);
-    }
-  }, [showSurpriseModal]);
-
-  // Mejorar visuales y colores de cada frame
-const legalFrames = [
+const LEGAL_FRAMES = [
   {
     text: "Completaste el cuestionario... Y ahora...",
     color: "bg-gradient-to-br from-blue-300 via-indigo-200 to-blue-50 border-4 border-indigo-400 text-indigo-900",
@@ -47,34 +31,38 @@ const legalFrames = [
   }
 ];
 
+export const FinalQuestionPage: React.FC = () => {
+  const { getCurrentScore } = useGameStore();
+  const [userResponse, setUserResponse] = useState<'yes' | 'no' | null>(null);
+  const [trollAttempts] = useState(0);
+  const [showTrollMessage, setShowTrollMessage] = useState(false);
+  const [showLegalFrames, setShowLegalFrames] = useState(true);
+  const [frameIndex, setFrameIndex] = useState(0);
+  const [showSurpriseModal, setShowSurpriseModal] = useState(false);
+  const [imageRevealed, setImageRevealed] = useState(false);
+  const [currentTrollMessage, setCurrentTrollMessage] = useState<string>("");
+
   useEffect(() => {
-    if (showLegalFrames && frameIndex < legalFrames.length) {
+    if (showSurpriseModal) {
+      setImageRevealed(false);
+      const timer = setTimeout(() => setImageRevealed(true), IMAGE_REVEAL_DELAY);
+      return () => clearTimeout(timer);
+    }
+  }, [showSurpriseModal]);
+
+  useEffect(() => {
+    if (showLegalFrames && frameIndex < LEGAL_FRAMES.length) {
       const timer = setTimeout(() => {
         setFrameIndex(frameIndex + 1);
-      }, 10000); // Tiempo por slide ajustado a 6.5 segundos
+      }, LEGAL_FRAME_DURATION);
       return () => clearTimeout(timer);
-    } else if (frameIndex >= legalFrames.length) {
-      setShowLegalFrames(false); // Transición inmediata al finalizar slides
+    } else if (frameIndex >= LEGAL_FRAMES.length) {
+      setShowLegalFrames(false);
     }
   }, [showLegalFrames, frameIndex]);
 
-  // Usar los mensajes de trolleo personalizados
-  const trollMessages = customTrollMessages;
-  const [currentTrollMessage, setCurrentTrollMessage] = useState<string>("");
-  const [trollIndex, setTrollIndex] = useState(0);
-
-  useEffect(() => {
-    // Add romantic background music or ambient sounds here
-    return () => {
-      // Cleanup
-    };
-  }, []);
-
   const handleNoClick = () => {
-    // Mostrar mensajes en orden y repetir infinitamente
-    const nextIndex = (trollIndex + 1) % trollMessages.length;
-    setTrollIndex(nextIndex);
-    setCurrentTrollMessage(trollMessages[nextIndex]);
+    setCurrentTrollMessage(getRandomFinalMessage());
     setShowTrollMessage(true);
   };
 
@@ -85,10 +73,6 @@ const legalFrames = [
     }
     
     setUserResponse(response);
-    // Trigger celebration effects
-    setTimeout(() => {
-      // Could navigate to a celebration page or show success message
-    }, 3000);
   };
 
   const score = getCurrentScore();
@@ -127,23 +111,21 @@ const legalFrames = [
               ease: "easeInOut"
             }}
           >
-            {['💕', '💖', '💝', '🌹', '✨', '💍', '🦋', '🌟', '🫶', '💘', '💞', '💓', '💗', '💐', '💜', '💙', '💚', '💛', '🧡', '❤️'][Math.floor(Math.random() * 20)]}
+            {EMOJI_SET[Math.floor(Math.random() * EMOJI_SET.length)]}
           </motion.div>
         ))}
       </div>
 
-      {/* Secuencia legal previa con transición suave */}
       {showLegalFrames ? (
         <>
-          {/* Solo renderizar el slide si el frameIndex es válido */}
-          {frameIndex < legalFrames.length && (
+          {frameIndex < LEGAL_FRAMES.length && (
             <motion.div
               key={frameIndex}
               initial={{ opacity: 0, scale: 0.92, y: 40 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.92, y: -40 }}
               transition={{ duration: 0.7, ease: "easeInOut" }}
-              className={`flex flex-col items-center justify-center min-h-[60vh] w-full z-30 rounded-[2.5rem] shadow-2xl border-4 p-8 md:p-16 transition-all duration-700 bg-white/80 backdrop-blur-lg ${legalFrames[frameIndex].color}`}
+              className={`flex flex-col items-center justify-center min-h-[60vh] w-full z-30 rounded-[2.5rem] shadow-2xl border-4 p-8 md:p-16 transition-all duration-700 bg-white/80 backdrop-blur-lg ${LEGAL_FRAMES[frameIndex].color}`}
               style={{
                 boxShadow: '0 12px 40px 0 rgba(60,60,120,0.22)',
                 backdropFilter: 'blur(10px)',
@@ -151,16 +133,15 @@ const legalFrames = [
               }}
             >
               <div className="text-6xl md:text-8xl mb-8 md:mb-14 drop-shadow-2xl animate-bounce-slow" style={{ fontFamily: 'Montserrat, Inter, sans-serif', fontWeight: 700, letterSpacing: '0.04em' }}>
-                {legalFrames[frameIndex].emoji}
+                {LEGAL_FRAMES[frameIndex].emoji}
               </div>
               <h2 className="text-2xl md:text-4xl font-extrabold mb-4 md:mb-8 text-center leading-tight md:leading-normal tracking-wide" style={{ fontFamily: 'Montserrat, Inter, sans-serif', fontWeight: 800, letterSpacing: '0.03em', textShadow: '0 2px 8px rgba(0,0,0,0.08)' }}>
-                {legalFrames[frameIndex].text}
+                {LEGAL_FRAMES[frameIndex].text}
               </h2>
               <div className="text-lg md:text-2xl text-gray-800 text-center font-semibold italic" style={{ fontFamily: 'Montserrat, Inter, sans-serif', letterSpacing: '0.02em' }}>
                 {frameIndex === 2 && 'La constitución no te prepara para esto...'}
                 {frameIndex === 3 && '¿Apelás?... ¿Aceptás el fallo?... HABLE AHORA O CALLE PARA SIEMPRE'}
               </div>
-              {/* ...sin botón para saltar, solo transición automática... */}
             </motion.div>
           )}
         </>
@@ -182,7 +163,7 @@ const legalFrames = [
               Y tu puntaje amoroso conmigo es...
             </h3>
             <div className="text-4xl font-bold text-rose-600 mb-2">
-              {score} 💖
+              200 💖
             </div>
             <div className="text-lg text-gray-600">
               Con una compatibilidad deeeel... {compatibilityPercentage}% ✨

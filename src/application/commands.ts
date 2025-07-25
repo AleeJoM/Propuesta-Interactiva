@@ -1,8 +1,15 @@
-// CQRS Commands
+// CQRS Commands & Queries
+
+// Base interfaces
 export interface Command {
   readonly type: string;
 }
 
+export interface Query {
+  readonly type: string;
+}
+
+// Commands
 export interface StartGameCommand extends Command {
   readonly type: 'START_GAME';
 }
@@ -21,11 +28,7 @@ export interface CompleteGameCommand extends Command {
   readonly type: 'COMPLETE_GAME';
 }
 
-// CQRS Queries
-export interface Query {
-  readonly type: string;
-}
-
+// Queries
 export interface GetCurrentQuestionQuery extends Query {
   readonly type: 'GET_CURRENT_QUESTION';
 }

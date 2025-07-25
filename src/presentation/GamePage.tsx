@@ -5,16 +5,21 @@ import { useGameStore } from '../infrastructure/stores';
 import { QuestionCard } from '../components/QuestionCard';
 import { RomanticButton } from '../components/RomanticButton';
 
-// Application Layer imports
 import { 
   StartGameCommandHandler,
   AnswerQuestionCommandHandler
 } from '../application/command-handlers';
 
-// Infrastructure imports
 import { InMemoryQuestionRepository } from '../infrastructure/question-repository';
 import { InMemoryGameSessionRepository } from '../infrastructure/game-session-repository';
 import { GameServiceImpl, ScoreCalculatorServiceImpl } from '../infrastructure/game-service';
+
+const TOTAL_EMOJIS = 36;
+const EMOJI_SET = ['💕', '💖', '💝', '🌹', '✨', '💍', '🦋', '🌟', '🫶', '💘', '💞', '💓', '💗', '💐', '💜', '💙', '💚', '💛', '🧡', '❤️'];
+const LOADING_DELAY = 1000;
+
+const getRandomEmoji = () => EMOJI_SET[Math.floor(Math.random() * EMOJI_SET.length)];
+const getRandomPosition = () => Math.random() * (window?.innerWidth || 800) * 0.90;
 
 export const GamePage: React.FC = () => {
   const navigate = useNavigate();
@@ -33,7 +38,6 @@ export const GamePage: React.FC = () => {
   const [gameService] = useState(() => new GameServiceImpl(questionRepository, sessionRepository, scoreCalculator));
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
 
-  // Command Handlers
   const [startGameHandler] = useState(() => new StartGameCommandHandler(gameService, sessionRepository));
   const [answerQuestionHandler] = useState(() => new AnswerQuestionCommandHandler(gameService, sessionRepository));
 
@@ -44,21 +48,13 @@ export const GamePage: React.FC = () => {
   const initializeGame = async () => {
     setLoading(true);
     try {
-      console.log('Initializing game...');
-      
-      // Start new game
       const session = await startGameHandler.handle({ type: 'START_GAME' });
-      console.log('Game session created:', session);
       setGameSession(session);
 
-      // Get all questions
       const allQuestions = await questionRepository.findAll();
-      console.log('All questions loaded:', allQuestions.length);
       
-      // Set first question
       if (allQuestions.length > 0) {
         setCurrentQuestion(allQuestions[0]);
-        console.log('First question set:', allQuestions[0]);
       }
     } catch (error) {
       console.error('Error initializing game:', error);
@@ -72,35 +68,24 @@ export const GamePage: React.FC = () => {
 
     setLoading(true);
     try {
-      console.log('Answering question:', currentQuestion.id.getValue(), 'with option:', optionId);
-      
-      // Answer the question
       const updatedSession = await answerQuestionHandler.handle({
         type: 'ANSWER_QUESTION',
         questionId: currentQuestion.id.getValue(),
         optionId
       });
       
-      console.log('Updated session:', updatedSession);
       setGameSession(updatedSession);
 
-      // Wait a moment for visual feedback
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      await new Promise(resolve => setTimeout(resolve, LOADING_DELAY));
 
-      // Get all questions and check if there are more
       const allQuestions = await questionRepository.findAll();
       const nextIndex = currentQuestionIndex + 1;
       
-      console.log('Current index:', currentQuestionIndex, 'Next index:', nextIndex, 'Total questions:', allQuestions.length);
-      
       if (nextIndex >= allQuestions.length) {
-        console.log('Game completed, navigating to final question');
         navigate('/final-question');
         return;
       }
 
-      // Set next question
-      console.log('Setting next question:', allQuestions[nextIndex]);
       setCurrentQuestion(allQuestions[nextIndex]);
       setCurrentQuestionIndex(nextIndex);
 
@@ -127,10 +112,12 @@ export const GamePage: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 relative overflow-hidden" style={{ background: 'linear-gradient(135deg, #fdf6fb 0%, #e6e6fa 100%)' }}>
-      {/* Animated background emojis */}
+    <div 
+      className="min-h-screen flex items-center justify-center p-4 relative overflow-hidden" 
+      style={{ background: 'linear-gradient(135deg, #fdf6fb 0%, #e6e6fa 100%)' }}
+    >
       <div className="absolute inset-0 pointer-events-none z-0">
-        {[...Array(36)].map((_, i) => (
+        {[...Array(TOTAL_EMOJIS)].map((_, i) => (
           <motion.div
             key={i}
             className="absolute"
@@ -141,8 +128,8 @@ export const GamePage: React.FC = () => {
               zIndex: 1
             }}
             initial={{ 
-              x: Math.random() * window.innerWidth * 0.90,
-              y: window.innerHeight + 120,
+              x: getRandomPosition(),
+              y: (window?.innerHeight || 600) + 120,
               opacity: 0,
               rotate: 0
             }}
@@ -150,7 +137,7 @@ export const GamePage: React.FC = () => {
               y: -120,
               opacity: [0, 1, 0.8, 0],
               rotate: 360,
-              x: Math.random() * window.innerWidth * 0.90
+              x: getRandomPosition()
             }}
             transition={{
               duration: 6 + Math.random() * 3,
@@ -159,12 +146,12 @@ export const GamePage: React.FC = () => {
               ease: "easeInOut"
             }}
           >
-            {['💕', '💖', '💝', '🌹', '✨', '💍', '🦋', '🌟', '🫶', '💘', '💞', '💓', '💗', '💐', '💜', '💙', '💚', '💛', '🧡', '❤️'][Math.floor(Math.random() * 20)]}
+            {getRandomEmoji()}
           </motion.div>
         ))}
       </div>
+
       <div className="w-full max-w-4xl relative z-10">
-        {/* Question Card */}
         {isLoading && !currentQuestion ? (
           <motion.div 
             className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl border border-pink-200 p-6 text-center"
@@ -184,7 +171,6 @@ export const GamePage: React.FC = () => {
           />
         ) : null}
 
-        {/* Navigation */}
         <motion.div 
           className="text-center mt-8"
           initial={{ opacity: 0 }}

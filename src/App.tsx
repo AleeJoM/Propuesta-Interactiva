@@ -6,13 +6,39 @@ import { GamePage } from './presentation/GamePage';
 import { FinalQuestionPage } from './presentation/FinalQuestionPage';
 import { useNavigationStore } from './infrastructure/stores';
 
+const TRANSITION_DURATION = 0.5;
+const LOADING_ANIMATION_DURATION = 1;
+const HEART_SCALE_ANIMATION = [1, 1.2, 1];
+const HEART_ROTATION_ANIMATION = [0, 5, -5, 0];
+
+const ROUTE_ANIMATIONS = {
+  welcome: {
+    initial: { opacity: 0, x: -100 },
+    animate: { opacity: 1, x: 0 },
+    exit: { opacity: 0, x: 100 },
+    transition: { duration: TRANSITION_DURATION }
+  },
+  game: {
+    initial: { opacity: 0, y: 50 },
+    animate: { opacity: 1, y: 0 },
+    exit: { opacity: 0, y: -50 },
+    transition: { duration: TRANSITION_DURATION }
+  },
+  final: {
+    initial: { opacity: 0, scale: 0.9 },
+    animate: { opacity: 1, scale: 1 },
+    exit: { opacity: 0, scale: 1.1 },
+    transition: { duration: 0.6 }
+  }
+};
+
 const App: React.FC = () => {
   const { isTransitioning } = useNavigationStore();
 
   return (
     <Router>
       <div className="app-container">
-        <AnimatePresence mode="wait" onExitComplete={() => {}}>
+        <AnimatePresence mode="wait">
           {isTransitioning && (
             <motion.div
               key="transition"
@@ -24,11 +50,11 @@ const App: React.FC = () => {
               <div className="text-center text-white">
                 <motion.div
                   animate={{ 
-                    scale: [1, 1.2, 1],
-                    rotate: [0, 5, -5, 0]
+                    scale: HEART_SCALE_ANIMATION,
+                    rotate: HEART_ROTATION_ANIMATION
                   }}
                   transition={{ 
-                    duration: 1,
+                    duration: LOADING_ANIMATION_DURATION,
                     repeat: Infinity
                   }}
                   className="text-6xl mb-4"
@@ -48,10 +74,7 @@ const App: React.FC = () => {
               element={
                 <motion.div
                   key="welcome"
-                  initial={{ opacity: 0, x: -100 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: 100 }}
-                  transition={{ duration: 0.5 }}
+                  {...ROUTE_ANIMATIONS.welcome}
                 >
                   <WelcomePage />
                 </motion.div>
@@ -63,10 +86,7 @@ const App: React.FC = () => {
               element={
                 <motion.div
                   key="game"
-                  initial={{ opacity: 0, y: 50 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -50 }}
-                  transition={{ duration: 0.5 }}
+                  {...ROUTE_ANIMATIONS.game}
                 >
                   <GamePage />
                 </motion.div>
@@ -78,10 +98,7 @@ const App: React.FC = () => {
               element={
                 <motion.div
                   key="final"
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0, scale: 1.1 }}
-                  transition={{ duration: 0.6 }}
+                  {...ROUTE_ANIMATIONS.final}
                 >
                   <FinalQuestionPage />
                 </motion.div>
